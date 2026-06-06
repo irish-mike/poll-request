@@ -1,0 +1,26 @@
+:root {
+    --color-bg: #030604;
+    --color-surface: #0a100c;
+    --color-surface-strong: #101912;
+
+    --color-text: #e8ffe6;
+    --color-text-muted: #91aa8f;
+
+    --color-primary: #61cf5a;
+    --color-primary-soft: rgba(97, 207, 90, 0.1);
+    --color-primary-border: rgba(97, 207, 90, 0.36);
+
+    --color-accent: #ffb86b;
+    --color-accent-soft: rgba(255, 184, 107, 0.1);
+    --color-accent-border: rgba(255, 184, 107, 0.42);
+
+    --color-border: #1f3323;
+    --color-border-strong: #315238;
+    --color-danger: #ff5c7a;
+
+    --font-body: system-ui, sans-serif;
+    --font-console: "Courier New", monospace;
+
+    --shadow-console: 0 0 18px rgba(97, 207, 90, 0.08);
+    --shadow-console-accent: 0 0 18px rgba(255, 184, 107, 0.12);
+}
