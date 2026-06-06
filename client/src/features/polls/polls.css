@@ -1,3 +1,5 @@
+/* region Polls page header */
+
 .polls-page-header {
     margin-bottom: 3rem;
     padding: 1.5rem;
@@ -12,7 +14,6 @@
     justify-content: space-between;
     gap: 1.5rem;
 }
-
 
 .polls-page-title-row {
     display: flex;
@@ -40,6 +41,10 @@
     max-width: 42rem;
 }
 
+/* endregion */
+
+/* region Polls page actions */
+
 .btn.polls-page-create-button {
     display: inline-flex;
     align-items: center;
@@ -65,12 +70,26 @@
     outline-offset: 3px;
 }
 
+/* endregion */
+
+/* region Polls page states */
+
 .polls-page-error {
     color: var(--color-danger);
     font-family: var(--font-console), ui-monospace;
 }
 
+.poll-empty {
+    color: var(--color-text-muted);
+    font-family: var(--font-console), ui-monospace;
+}
+
+/* endregion */
+
+/* region Poll card */
+
 .poll-card {
+    min-height: 10.5rem;
     background: rgba(10, 16, 12, 0.92);
     border: 1px solid var(--color-border);
     color: var(--color-text);
@@ -83,28 +102,59 @@
     box-shadow: var(--shadow-console);
 }
 
-.poll-card-prompt {
+.poll-card-body {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
-    color: var(--color-accent);
-    font-family: var(--font-console), ui-monospace;
-    font-size: 0.8rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
 }
 
-.poll-card .card-text {
+.poll-card-question-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.poll-card-question-icon {
+    flex: 0 0 auto;
+    margin-top: 0.15rem;
+    color: var(--color-text);
+}
+
+.poll-card-question {
     margin: 0;
     color: var(--color-text);
     font-family: var(--font-console), ui-monospace;
-    font-size: 1rem;
-    line-height: 1.45;
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.5;
 }
 
-.poll-empty {
+/* endregion */
+
+/* region Poll card metadata */
+
+.poll-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-family: var(--font-console), ui-monospace;
+    font-size: 0.78rem;
 }
+
+.poll-card-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* endregion */
+
+/* region Responsive layout */
 
 @media (max-width: 767px) {
     .polls-page-header-content {
@@ -112,3 +162,5 @@
         flex-direction: column;
     }
 }
+
+/* endregion */
