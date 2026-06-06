@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "./db/db.js";
 
 import express from "express";
 

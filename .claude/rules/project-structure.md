@@ -22,10 +22,13 @@
 - Keep route files thin.
 - Route files should handle HTTP concerns: request parsing, response formatting, status codes, and route composition.
 - Put reusable backend logic outside route files.
-- Put db connection, schema setup, and database query functions in `server/src/db/`.
+- Put database connection, schema setup, and query functions in `server/src/db/`.
 
 ## Database structure
 
-- Keep db schema and query logic in `server/src/db/`.
+- Keep database code in `server/src/db/`.
+- Keep the SQLite database file outside `src`, in `server/data/`.
+- Use `server/data/poll-request.db` as the default local database file.
 - Keep database access explicit and easy to trace.
 - Avoid spreading raw SQL throughout unrelated application code.
+- Do not commit generated SQLite database files.
