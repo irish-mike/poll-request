@@ -26,8 +26,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: server/package-lock.json
+          package-manager-cache: false
 
       - name: Install server dependencies
         working-directory: server
@@ -57,8 +56,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: client/package-lock.json
+          package-manager-cache: false
 
       - name: Install client dependencies
         working-directory: client
@@ -93,8 +91,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: client/package-lock.json
+          package-manager-cache: false
 
       # Build the React app for Apache to serve.
       - name: Install client dependencies
