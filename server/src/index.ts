@@ -2,6 +2,7 @@ import "dotenv/config";
 import "./db/db.js";
 
 import express from "express";
+import polls_router from "./routes/polls.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ if (Number.isNaN(port)) {
 }
 
 app.use(express.json());
+app.use("/api/polls", polls_router);
 
 app.get("/api/health", (_req, res) => {
     res.json({ ok: true });
