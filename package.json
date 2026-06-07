@@ -1,0 +1,24 @@
+{
+    "name": "poll-request",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Poll Request is a simple web application that allows users to create, share, and vote on polls.",
+    "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/irish-mike/poll-request.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/irish-mike/poll-request/issues"
+    },
+    "homepage": "https://github.com/irish-mike/poll-request#readme",
+    "devDependencies": {
+        "prettier": "^3.8.3"
+    }
+}

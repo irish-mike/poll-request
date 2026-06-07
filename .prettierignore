@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+coverage
+
+client/node_modules
+client/dist
+
+server/node_modules
+server/dist
+server/data
+
+*.db
+*.sqlite
+*.sqlite3
