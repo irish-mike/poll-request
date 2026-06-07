@@ -14,7 +14,7 @@ interface Props {
     icon: ReactNode;
     title: string;
     description: ReactNode;
-    action_button: ActionButton;
+    action_button?: ActionButton;
 }
 
 const PageHeader = ({ icon, title, description, action_button }: Props) => (

@@ -29,8 +29,8 @@ const PageMessage = ({ message, variant = "muted" }: PageMessageProps) => (
 
 const ViewPollPage = () => {
     const { id } = useParams<{ id: string }>();
-    const poll_id = id ? Number(id) : null;
-    const valid_poll_id = Number.isFinite(poll_id) ? poll_id : null;
+    const poll_id = Number(id);
+    const valid_poll_id = Number.isInteger(poll_id) && poll_id > 0 ? poll_id : null;
 
     const navigate = useNavigate();
     const { data: poll, error, isLoading } = usePoll(valid_poll_id);

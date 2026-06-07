@@ -6,7 +6,7 @@ import PageHeader from "../components/page-header";
 import { PollGrid } from "../features/polls/components/poll-grid";
 import { usePolls } from "../features/polls/hooks/use-polls";
 
-export const PollsPage = () => {
+const PollsPage = () => {
     const navigate = useNavigate();
     const { data: polls = [], error, isLoading } = usePolls();
 
@@ -31,3 +31,5 @@ export const PollsPage = () => {
         </Container>
     );
 };
+
+export default PollsPage;
