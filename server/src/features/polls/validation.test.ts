@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { isValidCreatePollRequest } from "./validation";
+import { isValidCreatePollRequest } from "./validation.js";
 
 describe("isValidCreatePollRequest", () => {
     it("accepts a valid request", () => {
