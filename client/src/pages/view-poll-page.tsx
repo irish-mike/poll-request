@@ -5,6 +5,7 @@ import { GitPullRequest, Share2 } from "lucide-react";
 import BackLink from "../components/back-link";
 import PageHeader from "../components/page-header";
 import { PollRef } from "../features/polls/components/poll-ref.tsx";
+import { PollResults } from "../features/polls/components/poll-results.tsx";
 import { usePoll } from "../features/polls/hooks/use-poll.ts";
 
 interface Props {
@@ -51,13 +52,7 @@ const ViewPollPage = () => {
                 }}
             />
 
-            <ul>
-                {poll.options.map((option) => (
-                    <li key={option.id}>{option.content}</li>
-                ))}
-            </ul>
-
-            <p>Total votes: {poll.total_votes}</p>
+            <PollResults options={poll.options} total_votes={poll.total_votes} />
         </Container>
     );
 };
