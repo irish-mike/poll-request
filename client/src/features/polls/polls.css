@@ -164,3 +164,89 @@
 }
 
 /* endregion */
+
+/* region Create poll page */
+
+.page-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-console), ui-monospace;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.page-back-link:hover {
+    color: var(--color-primary);
+}
+
+.create-poll-form {
+    padding: 2rem;
+    background: rgba(10, 16, 12, 0.88);
+    border: 1px solid var(--color-border-strong);
+    box-shadow: var(--shadow-console);
+}
+
+.create-poll-form .form-label {
+    color: var(--color-text-muted);
+    font-family: var(--font-console), ui-monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.create-poll-form .form-control {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text);
+    font-family: var(--font-console), ui-monospace;
+}
+
+.create-poll-form .form-control::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.6;
+}
+
+.create-poll-form .form-control:focus {
+    background: var(--color-surface-strong);
+    border-color: var(--color-primary-border);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+    color: var(--color-text);
+}
+
+.btn.create-poll-submit-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--color-accent-border);
+    color: var(--color-accent);
+    font-family: var(--font-console), ui-monospace;
+    font-weight: 700;
+}
+
+.btn.create-poll-submit-button:hover,
+.btn.create-poll-submit-button:focus {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    box-shadow: var(--shadow-console-accent);
+}
+
+.btn.create-poll-submit-button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.btn.create-poll-submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* endregion */
