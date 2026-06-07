@@ -1,14 +1,17 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { GitPullRequest } from "lucide-react";
 
-import { createPoll } from "./api";
-import { create_poll_schema, type CreatePollFormValues } from "./create-poll-schema";
+import { createPoll } from "../api/api.ts";
+import { create_poll_schema, type CreatePollFormValues } from "../model/create-poll-schema.ts";
 
-export const CreatePollForm = () => {
+interface Props {
+    onIsSubmittingChange?: (value: boolean) => void;
+}
+
+export const CreatePollForm = ({ onIsSubmittingChange }: Props) => {
     const navigate = useNavigate();
 
     const {
@@ -19,6 +22,10 @@ export const CreatePollForm = () => {
     } = useForm<CreatePollFormValues>({
         resolver: zodResolver(create_poll_schema),
     });
+
+    useEffect(() => {
+        onIsSubmittingChange?.(isSubmitting);
+    }, [isSubmitting, onIsSubmittingChange]);
 
     const onSubmit = async (data: CreatePollFormValues) => {
         try {
@@ -32,7 +39,7 @@ export const CreatePollForm = () => {
     };
 
     return (
-        <Form className="create-poll-form" onSubmit={handleSubmit(onSubmit)}>
+        <Form id="create-poll-form" className="create-poll-form" onSubmit={handleSubmit(onSubmit)}>
             <Form.Group className="mb-4">
                 <Form.Label>Question</Form.Label>
                 <Form.Control type="text" placeholder="What should the team decide?" {...register("question")} />
@@ -52,11 +59,6 @@ export const CreatePollForm = () => {
             </Form.Group>
 
             {errors.root && <p className="polls-page-error">{errors.root.message}</p>}
-
-            <Button type="submit" className="create-poll-submit-button" disabled={isSubmitting}>
-                <GitPullRequest size={18} />
-                {isSubmitting ? "Opening…" : "Open Poll Request"}
-            </Button>
         </Form>
     );
 };

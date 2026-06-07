@@ -1,8 +1,8 @@
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
-import type { Poll } from "./types";
-import { PollCard } from "./poll-card";
+import type { Poll } from "../model/types.ts";
+import { PollCard } from "./poll-card.tsx";
 
 interface Props {
     polls: Poll[];

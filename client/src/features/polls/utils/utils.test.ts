@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { formatPollRef, parsePollRef } from "./utils";
+import { formatPollRef, parsePollRef } from "./utils.ts";
 
 describe("formatPollRef", () => {
     it("pads a small id to 7 hex characters", () => {

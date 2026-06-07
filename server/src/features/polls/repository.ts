@@ -1,5 +1,5 @@
 import db from "../../db/db.js";
-import type { CreatePollData, PollRow } from "./types.js";
+import type { CreatePollData, OptionRow, PollDetailRow, PollRow } from "./types.js";
 
 export function getAllPolls(): PollRow[] {
     return db
@@ -12,6 +12,37 @@ export function getAllPolls(): PollRow[] {
         `
         )
         .all();
+}
+
+export function getPollById(id: number): PollDetailRow | null {
+    const poll = db
+        .prepare<[number], PollRow>(
+            `
+            SELECT id, question, created_at, updated_at
+            FROM polls
+            WHERE id = ? AND deleted_at IS NULL
+        `
+        )
+        .get(id);
+
+    if (!poll) return null;
+
+    const options = db
+        .prepare<[number], OptionRow>(
+            `
+            SELECT o.id, o.content, COUNT(v.id) as vote_count
+            FROM options o
+            LEFT JOIN votes v ON v.option_id = o.id AND v.deleted_at IS NULL
+            WHERE o.poll_id = ? AND o.deleted_at IS NULL
+            GROUP BY o.id
+            ORDER BY o.id ASC
+        `
+        )
+        .all(id);
+
+    const total_votes = options.reduce((sum, o) => sum + o.vote_count, 0);
+
+    return { ...poll, options, total_votes };
 }
 
 export function insertPoll(input: CreatePollData): number {

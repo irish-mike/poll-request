@@ -43,9 +43,9 @@
 
 /* endregion */
 
-/* region Polls page actions */
+/* region Header action button */
 
-.btn.polls-page-create-button {
+.btn.header-action-button {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -57,17 +57,22 @@
     font-weight: 700;
 }
 
-.btn.polls-page-create-button:hover,
-.btn.polls-page-create-button:focus {
+.btn.header-action-button:hover,
+.btn.header-action-button:focus {
     background: var(--color-accent-soft);
     border-color: var(--color-accent);
     color: var(--color-accent);
     box-shadow: var(--shadow-console-accent);
 }
 
-.btn.polls-page-create-button:focus-visible {
+.btn.header-action-button:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
+}
+
+.btn.header-action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* endregion */
@@ -219,35 +224,6 @@
     border-color: var(--color-primary-border);
     box-shadow: 0 0 0 3px var(--color-primary-soft);
     color: var(--color-text);
-}
-
-.btn.create-poll-submit-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    border: 1px solid var(--color-accent-border);
-    color: var(--color-accent);
-    font-family: var(--font-console), ui-monospace;
-    font-weight: 700;
-}
-
-.btn.create-poll-submit-button:hover,
-.btn.create-poll-submit-button:focus {
-    background: var(--color-accent-soft);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    box-shadow: var(--shadow-console-accent);
-}
-
-.btn.create-poll-submit-button:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-}
-
-.btn.create-poll-submit-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 /* endregion */

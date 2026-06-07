@@ -1,9 +1,9 @@
 import Card from "react-bootstrap/Card";
-import { Clock3, GitCommit, MessageCircleQuestion } from "lucide-react";
+import { Clock3, MessageCircleQuestion } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import type { Poll } from "./types";
-import { formatPollRef } from "./utils";
+import type { Poll } from "../model/types.ts";
+import { PollRef } from "./poll-ref.tsx";
 
 interface Props {
     poll: Poll;
@@ -11,7 +11,6 @@ interface Props {
 
 export const PollCard = ({ poll }: Props) => {
     const navigate = useNavigate();
-    const label = `poll-${formatPollRef(poll.id)}`;
 
     const committed_at = new Date(poll.updated_at * 1000).toLocaleString(undefined, {
         month: "short",
@@ -31,10 +30,7 @@ export const PollCard = ({ poll }: Props) => {
                 </div>
 
                 <div className="poll-card-meta">
-                    <span className="poll-card-meta-item">
-                        <GitCommit size={14} />
-                        {label}
-                    </span>
+                    <PollRef id={poll.id} />
 
                     <span className="poll-card-meta-item">
                         <Clock3 size={14} />

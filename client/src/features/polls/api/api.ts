@@ -1,4 +1,4 @@
-import type { Poll } from "./types";
+import type { Poll, PollDetail } from "../model/types.ts";
 
 export async function getPolls(): Promise<Poll[]> {
     const res = await fetch("/api/polls");
@@ -8,6 +8,16 @@ export async function getPolls(): Promise<Poll[]> {
     }
 
     return (await res.json()) as Poll[];
+}
+
+export async function getPoll(id: number): Promise<PollDetail> {
+    const res = await fetch(`/api/polls/${id}`);
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch poll");
+    }
+
+    return (await res.json()) as PollDetail;
 }
 
 export async function createPoll(question: string, options: string[]): Promise<{ id: number }> {
