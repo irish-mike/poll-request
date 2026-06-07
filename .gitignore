@@ -82,6 +82,7 @@ pids/
 *.sqlite
 *.sqlite3
 *.db
+/server/data
 
 # Local certificates / secrets
 
@@ -121,3 +122,4 @@ lib-cov/
 .DS_Store
 Thumbs.db
 desktop.ini
+
