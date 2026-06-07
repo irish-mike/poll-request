@@ -1,20 +1,23 @@
 import { Router } from "express";
 
+import { parseRouteId } from "../../utils/validation.js";
 import { getAllPolls, getPollById } from "./repository.js";
-import { castVote, createPoll } from "./service.js";
+import { castVote, createPoll, deletePoll } from "./service.js";
 
 const polls_router = Router();
 
+// GET /polls — list all polls
 polls_router.get("/", (_req, res) => {
     const polls = getAllPolls();
 
     res.json(polls);
 });
 
+// GET /polls/:id — poll detail with options, vote counts, and user state
 polls_router.get("/:id", (req, res) => {
-    const id = Number(req.params.id);
+    const id = parseRouteId(req.params.id);
 
-    if (!Number.isInteger(id) || id <= 0) {
+    if (id === null) {
         res.status(400).json({ error: "Invalid poll ID" });
         return;
     }
@@ -30,10 +33,23 @@ polls_router.get("/:id", (req, res) => {
     res.json(poll);
 });
 
-polls_router.post("/:id/votes", (req, res) => {
-    const poll_id = Number(req.params.id);
+// POST /polls — create a new poll
+polls_router.post("/", (req, res) => {
+    const poll_id = createPoll(req.body);
 
-    if (!Number.isInteger(poll_id) || poll_id <= 0) {
+    if (poll_id === false) {
+        res.status(400).json({ error: "Invalid poll data" });
+        return;
+    }
+
+    res.status(201).json({ id: poll_id });
+});
+
+// POST /polls/:id/votes — submit a vote on a poll
+polls_router.post("/:id/votes", (req, res) => {
+    const poll_id = parseRouteId(req.params.id);
+
+    if (poll_id === null) {
         res.status(400).json({ error: "Invalid poll ID" });
         return;
     }
@@ -53,19 +69,28 @@ polls_router.post("/:id/votes", (req, res) => {
     res.status(201).json({ ok: true });
 });
 
-polls_router.post("/", (req, res) => {
-    try {
-        const poll_id = createPoll(req.body);
+// DELETE /polls/:id — soft-delete a poll (owner token required)
+polls_router.delete("/:id", (req, res) => {
+    const id = parseRouteId(req.params.id);
 
-        if (poll_id === false) {
-            res.status(400).json({ error: "Invalid poll data" });
-            return;
-        }
-
-        res.status(201).json({ id: poll_id });
-    } catch {
-        res.status(500).json({ error: "Failed to create poll" });
+    if (id === null) {
+        res.status(400).json({ error: "Invalid poll ID" });
+        return;
     }
+
+    const result = deletePoll(id, req.body);
+
+    if (result === false) {
+        res.status(400).json({ error: "Invalid request data" });
+        return;
+    }
+
+    if (result === "unauthorized") {
+        res.status(403).json({ error: "Not authorized to delete this poll" });
+        return;
+    }
+
+    res.json({ ok: true });
 });
 
 export default polls_router;

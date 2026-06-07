@@ -1,6 +1,13 @@
 import db from "../../db/db.js";
 import type { CreatePollData, OptionRow, PollDetailRow, PollRow, VoteData } from "./types.js";
 
+// owner_token is fetched for is_owner comparison but never returned to callers
+interface PollRowWithOwner extends PollRow {
+    owner_token: string | null;
+}
+
+// region Polls
+
 export function getAllPolls(): PollRow[] {
     return db
         .prepare<[], PollRow>(
@@ -15,18 +22,21 @@ export function getAllPolls(): PollRow[] {
 }
 
 export function getPollById(id: number, user_token?: string): PollDetailRow | null {
-    const poll = db
-        .prepare<[number], PollRow>(
+    const poll_row = db
+        .prepare<[number], PollRowWithOwner>(
             `
-            SELECT id, question, created_at, updated_at
+            SELECT id, question, created_at, updated_at, owner_token
             FROM polls
             WHERE id = ? AND deleted_at IS NULL
         `
         )
         .get(id);
 
-    if (!poll) return null;
+    if (!poll_row) return null;
 
+    const { owner_token, ...poll } = poll_row;
+
+    // Fetch options with their live vote counts
     const options = db
         .prepare<[number], OptionRow>(
             `
@@ -42,6 +52,7 @@ export function getPollById(id: number, user_token?: string): PollDetailRow | nu
 
     const total_votes = options.reduce((sum, o) => sum + o.vote_count, 0);
 
+    // Derive user state from the provided token
     const has_voted = user_token
         ? (db
               .prepare<[number, string], { result: number }>(
@@ -50,25 +61,16 @@ export function getPollById(id: number, user_token?: string): PollDetailRow | nu
               .get(id, user_token)?.result === 1)
         : false;
 
-    return { ...poll, options, total_votes, has_voted };
-}
+    const is_owner = Boolean(user_token && owner_token && user_token === owner_token);
 
-export function insertVote(poll_id: number, input: VoteData): boolean {
-    try {
-        db.prepare(
-            `INSERT INTO votes (poll_id, option_id, user_token) VALUES (?, ?, ?)`
-        ).run(poll_id, input.option_id, input.user_token);
-        return true;
-    } catch {
-        return false;
-    }
+    return { ...poll, options, total_votes, has_voted, is_owner };
 }
 
 export function insertPoll(input: CreatePollData): number {
     const insert_poll_transaction = db.transaction((input: CreatePollData) => {
         const insert_poll_stmt = db.prepare(`
-            INSERT INTO polls (question)
-            VALUES (?)
+            INSERT INTO polls (question, owner_token)
+            VALUES (?, ?)
         `);
 
         const insert_option_stmt = db.prepare(`
@@ -76,7 +78,7 @@ export function insertPoll(input: CreatePollData): number {
             VALUES (?, ?)
         `);
 
-        const poll_result = insert_poll_stmt.run(input.question);
+        const poll_result = insert_poll_stmt.run(input.question, input.owner_token);
         const poll_id = Number(poll_result.lastInsertRowid);
 
         for (const option of input.options) {
@@ -88,3 +90,31 @@ export function insertPoll(input: CreatePollData): number {
 
     return insert_poll_transaction(input);
 }
+
+export function deletePollById(id: number, owner_token: string): boolean {
+    const result = db
+        .prepare(`UPDATE polls SET deleted_at = unixepoch() WHERE id = ? AND owner_token = ? AND deleted_at IS NULL`)
+        .run(id, owner_token);
+
+    return result.changes > 0;
+}
+
+// endregion
+
+// region Votes
+
+export function insertVote(poll_id: number, input: VoteData): boolean {
+    try {
+        db.prepare(`INSERT INTO votes (poll_id, option_id, user_token) VALUES (?, ?, ?)`).run(
+            poll_id,
+            input.option_id,
+            input.user_token
+        );
+        return true;
+    } catch {
+        // UNIQUE(poll_id, user_token) constraint violation — duplicate vote
+        return false;
+    }
+}
+
+// endregion

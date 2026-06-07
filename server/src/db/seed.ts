@@ -26,8 +26,8 @@ const seedPolls: SeedPoll[] = [
 ];
 
 const insertPoll = db.prepare(`
-    INSERT INTO polls (question)
-    VALUES (?)
+    INSERT INTO polls (question, owner_token)
+    VALUES (?, ?)
 `);
 
 const insertOption = db.prepare(`
@@ -51,7 +51,7 @@ const seed = db.transaction(() => {
             continue;
         }
 
-        const pollResult = insertPoll.run(poll.question);
+        const pollResult = insertPoll.run(poll.question, `seed-owner`);
         const pollId = Number(pollResult.lastInsertRowid);
 
         const optionIds: number[] = [];

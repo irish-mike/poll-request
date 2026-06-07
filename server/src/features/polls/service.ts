@@ -1,11 +1,14 @@
-import { insertPoll, insertVote } from "./repository.js";
-import { isValidCreatePollRequest, isValidVoteRequest } from "./validation.js";
+import { deletePollById, insertPoll, insertVote } from "./repository.js";
+import { isValidCreatePollRequest, isValidDeletePollRequest, isValidVoteRequest } from "./validation.js";
 import type { CreatePollData, VoteData } from "./types.js";
+
+// region Polls
 
 function normalizeCreatePollRequest(request: CreatePollData): CreatePollData {
     return {
         question: request.question.trim(),
         options: request.options.map((option) => option.trim()),
+        owner_token: request.owner_token.trim(),
     };
 }
 
@@ -16,6 +19,18 @@ export function createPoll(value: unknown): number | false {
 
     return insertPoll(input);
 }
+
+export function deletePoll(poll_id: number, value: unknown): boolean | "unauthorized" {
+    if (!isValidDeletePollRequest(value)) return false;
+
+    const deleted = deletePollById(poll_id, value.owner_token.trim());
+
+    return deleted ? true : "unauthorized";
+}
+
+// endregion
+
+// region Votes
 
 function normalizeVoteRequest(request: VoteData): VoteData {
     return {
@@ -32,3 +47,5 @@ export function castVote(poll_id: number, value: unknown): true | false | "dupli
 
     return success ? true : "duplicate";
 }
+
+// endregion

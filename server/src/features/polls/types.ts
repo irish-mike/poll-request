@@ -15,11 +15,13 @@ export interface PollDetailRow extends PollRow {
     options: OptionRow[];
     total_votes: number;
     has_voted: boolean;
+    is_owner: boolean;
 }
 
 export interface CreatePollData {
     question: string;
     options: string[];
+    owner_token: string;
 }
 
 export interface VoteData {

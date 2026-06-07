@@ -9,11 +9,18 @@ export function isValidCreatePollRequest(value: unknown): value is CreatePollDat
 
     if (!isNonEmptyString(value.question)) return false;
 
+    if (!isNonEmptyString(value.owner_token)) return false;
+
     if (!Array.isArray(value.options)) return false;
 
     if (!hasLengthBetween(value.options, min_options, max_options)) return false;
 
     return value.options.every(isNonEmptyString);
+}
+
+export function isValidDeletePollRequest(value: unknown): value is { owner_token: string } {
+    if (!isRecord(value)) return false;
+    return isNonEmptyString(value.owner_token);
 }
 
 export function isValidVoteRequest(value: unknown): value is VoteData {

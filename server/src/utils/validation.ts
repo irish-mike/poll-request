@@ -13,3 +13,8 @@ export function hasLengthBetween<T>(value: T[], min: number, max: number): boole
 export function isPositiveInteger(value: unknown): value is number {
     return typeof value === "number" && Number.isInteger(value) && value > 0;
 }
+
+export function parseRouteId(value: string): number | null {
+    const id = Number(value);
+    return isPositiveInteger(id) ? id : null;
+}

@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 
 import { createPoll } from "../api/api.ts";
 import { create_poll_schema, type CreatePollFormValues } from "../model/create-poll-schema.ts";
+import { createUserToken, getUserToken } from "../../../utils/browser.ts";
 
 interface Props {
     onIsSubmittingChange?: (value: boolean) => void;
@@ -32,7 +33,8 @@ export const CreatePollForm = ({ onIsSubmittingChange }: Props) => {
             const options = [data.option_a, data.option_b, data.option_c, data.option_d, data.option_e]
                 .filter((o): o is string => Boolean(o?.trim()));
 
-            await createPoll(data.question, options);
+            const owner_token = getUserToken() ?? createUserToken();
+            await createPoll(data.question, options, owner_token);
             navigate("/");
         } catch (err: unknown) {
             setError("root", {

@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
-import { GitPullRequest, Link2 } from "lucide-react";
+import { GitPullRequest, Link2, Trash2 } from "lucide-react";
 
 import BackLink from "../components/back-link";
 import PageHeader from "../components/page-header";
 import { PollRef } from "../features/polls/components/poll-ref";
 import { PollResults } from "../features/polls/components/poll-results";
 import { PollVote } from "../features/polls/components/poll-vote";
+import { useDeletePoll } from "../features/polls/hooks/use-delete-poll";
 import { usePoll } from "../features/polls/hooks/use-poll";
 import { useSubmitVote } from "../features/polls/hooks/use-submit-vote";
 import { copyToClipboard } from "../utils/browser";
@@ -30,8 +32,10 @@ const ViewPollPage = () => {
     const poll_id = id ? Number(id) : null;
     const valid_poll_id = Number.isFinite(poll_id) ? poll_id : null;
 
+    const navigate = useNavigate();
     const { data: poll, error, isLoading } = usePoll(valid_poll_id);
     const vote_mutation = useSubmitVote(valid_poll_id);
+    const delete_mutation = useDeletePoll(valid_poll_id);
 
     const [show_toast, set_show_toast] = useState(false);
 
@@ -41,6 +45,12 @@ const ViewPollPage = () => {
 
     const handleVote = (option_id: number) => {
         vote_mutation.mutate(option_id);
+    };
+
+    const handleDelete = () => {
+        delete_mutation.mutate(undefined, {
+            onSuccess: () => navigate("/"),
+        });
     };
 
     if (valid_poll_id === null) {
@@ -75,11 +85,28 @@ const ViewPollPage = () => {
             />
 
             {vote_mutation.error && <p className="polls-page-error">{vote_mutation.error.message}</p>}
+            {delete_mutation.error && <p className="polls-page-error">{delete_mutation.error.message}</p>}
 
             {poll.has_voted ? (
                 <PollResults options={poll.options} total_votes={poll.total_votes} />
             ) : (
                 <PollVote options={poll.options} onVote={handleVote} />
+            )}
+
+            {poll.is_owner && (
+                <section className="poll-owner-actions" aria-label="Poll owner actions">
+                    <div>
+                        <p className="poll-owner-actions-title">Owner controls</p>
+                        <p className="poll-owner-actions-description">
+                            Delete this poll if you no longer want it to appear in the poll list.
+                        </p>
+                    </div>
+
+                    <Button className="delete-button" onClick={handleDelete} disabled={delete_mutation.isPending}>
+                        <Trash2 size={16} />
+                        {delete_mutation.isPending ? "Deleting..." : "Delete poll"}
+                    </Button>
+                </section>
             )}
 
             <ToastContainer position="top-center" className="p-3">

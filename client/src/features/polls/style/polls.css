@@ -381,6 +381,75 @@
 
 /* endregion */
 
+/* region Poll owner actions */
+
+.poll-owner-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(10, 16, 12, 0.72);
+    border: 1px solid var(--color-border);
+}
+
+.poll-owner-actions-title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-console), ui-monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.poll-owner-actions-description {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-console), ui-monospace;
+    font-size: 0.78rem;
+}
+
+.btn.delete-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgba(255, 92, 122, 0.45);
+    color: var(--color-danger);
+    font-family: var(--font-console), ui-monospace;
+    font-weight: 700;
+}
+
+.btn.delete-button:hover,
+.btn.delete-button:focus {
+    background: rgba(255, 92, 122, 0.1);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+    box-shadow: 0 0 18px rgba(255, 92, 122, 0.12);
+}
+
+.btn.delete-button:focus-visible {
+    outline: 2px solid var(--color-danger);
+    outline-offset: 3px;
+}
+
+.btn.delete-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+    .poll-owner-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* endregion */
+
 /* region Copy toast */
 
 .copy-toast {
