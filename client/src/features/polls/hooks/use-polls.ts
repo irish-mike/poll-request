@@ -1,22 +1,11 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { getPolls } from "../api/api.ts";
-import type { Poll } from "../model/types.ts";
+import { getPolls } from "../api/api";
+import { poll_query_keys } from "../api/query-keys";
 
 export function usePolls() {
-    const [polls, set_polls] = useState<Poll[]>([]);
-    const [error, set_error] = useState<string | null>(null);
-
-    useEffect(() => {
-        getPolls()
-            .then(set_polls)
-            .catch((err: unknown) => {
-                set_error(err instanceof Error ? err.message : "Unknown error");
-            });
-    }, []);
-
-    return {
-        polls,
-        error,
-    };
+    return useQuery({
+        queryKey: poll_query_keys.all,
+        queryFn: getPolls,
+    });
 }

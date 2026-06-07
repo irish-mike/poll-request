@@ -3,12 +3,12 @@ import Container from "react-bootstrap/Container";
 import { Code2, GitPullRequest } from "lucide-react";
 
 import PageHeader from "../components/page-header";
-import { PollGrid } from "../features/polls/components/poll-grid.tsx";
-import { usePolls } from "../features/polls/hooks/use-polls.ts";
+import { PollGrid } from "../features/polls/components/poll-grid";
+import { usePolls } from "../features/polls/hooks/use-polls";
 
 export const PollsPage = () => {
     const navigate = useNavigate();
-    const { polls, error } = usePolls();
+    const { data: polls = [], error, isLoading } = usePolls();
 
     return (
         <Container className="py-5">
@@ -23,7 +23,11 @@ export const PollsPage = () => {
                 }}
             />
 
-            {error ? <p className="polls-page-error">{error}</p> : <PollGrid polls={polls} />}
+            {isLoading && <p className="poll-empty">Loading polls...</p>}
+
+            {error && <p className="polls-page-error">{error.message}</p>}
+
+            {!isLoading && !error && <PollGrid polls={polls} />}
         </Container>
     );
 };

@@ -1,63 +1,19 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { getPoll } from "../api/api.ts";
-import { getUserToken } from "../../../utils/browser.ts";
-import type { PollDetail } from "../model/types.ts";
+import { getPoll } from "../api/api";
+import { poll_query_keys } from "../api/query-keys";
+import { getUserToken } from "../../../utils/browser";
 
-type UsePollState = {
-    poll: PollDetail | null;
-    error: string | null;
-    is_loading: boolean;
-};
+export function usePoll(id: number | null) {
+    return useQuery({
+        queryKey: poll_query_keys.detail(id),
+        queryFn: () => {
+            if (id === null) {
+                throw new Error("Invalid poll id");
+            }
 
-const loading_state: UsePollState = {
-    poll: null,
-    error: null,
-    is_loading: true,
-};
-
-const invalid_poll_state: UsePollState = {
-    poll: null,
-    error: "Invalid poll id",
-    is_loading: false,
-};
-
-function getLoadedState(poll: PollDetail): UsePollState {
-    return {
-        poll,
-        error: null,
-        is_loading: false,
-    };
-}
-
-function getErrorState(err: unknown): UsePollState {
-    return {
-        poll: null,
-        error: err instanceof Error ? err.message : "Unknown error",
-        is_loading: false,
-    };
-}
-
-export function usePoll(id: number | null): UsePollState & { refetch: () => void } {
-    const [state, set_state] = useState<UsePollState>(loading_state);
-    const [refetch_counter, set_refetch_counter] = useState(0);
-
-    useEffect(() => {
-        if (id === null) {
-            set_state(invalid_poll_state);
-            return;
-        }
-
-        set_state(loading_state);
-
-        getPoll(id, getUserToken())
-            .then((poll) => {
-                set_state(getLoadedState(poll));
-            })
-            .catch((err: unknown) => {
-                set_state(getErrorState(err));
-            });
-    }, [id, refetch_counter]);
-
-    return { ...state, refetch: () => set_refetch_counter((c) => c + 1) };
+            return getPoll(id, getUserToken());
+        },
+        enabled: id !== null,
+    });
 }

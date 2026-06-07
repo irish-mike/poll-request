@@ -7,12 +7,12 @@ import { GitPullRequest, Link2 } from "lucide-react";
 
 import BackLink from "../components/back-link";
 import PageHeader from "../components/page-header";
-import { PollRef } from "../features/polls/components/poll-ref.tsx";
-import { PollResults } from "../features/polls/components/poll-results.tsx";
-import { PollVote } from "../features/polls/components/poll-vote.tsx";
-import { usePoll } from "../features/polls/hooks/use-poll.ts";
-import { submitVote } from "../features/polls/api/api.ts";
-import { copyToClipboard, createUserToken, getUserToken } from "../utils/browser";
+import { PollRef } from "../features/polls/components/poll-ref";
+import { PollResults } from "../features/polls/components/poll-results";
+import { PollVote } from "../features/polls/components/poll-vote";
+import { usePoll } from "../features/polls/hooks/use-poll";
+import { useSubmitVote } from "../features/polls/hooks/use-submit-vote";
+import { copyToClipboard } from "../utils/browser";
 
 interface PageMessageProps {
     message: string;
@@ -28,8 +28,11 @@ const PageMessage = ({ message, variant = "muted" }: PageMessageProps) => (
 const ViewPollPage = () => {
     const { id } = useParams<{ id: string }>();
     const poll_id = id ? Number(id) : null;
+    const valid_poll_id = Number.isFinite(poll_id) ? poll_id : null;
 
-    const { poll, error, is_loading, refetch } = usePoll(Number.isFinite(poll_id) ? poll_id : null);
+    const { data: poll, error, isLoading } = usePoll(valid_poll_id);
+    const vote_mutation = useSubmitVote(valid_poll_id);
+
     const [show_toast, set_show_toast] = useState(false);
 
     const handleCopyLink = () => {
@@ -37,16 +40,19 @@ const ViewPollPage = () => {
     };
 
     const handleVote = (option_id: number) => {
-        const user_token = getUserToken() ?? createUserToken();
-        submitVote(Number(poll_id), option_id, user_token).then(refetch);
+        vote_mutation.mutate(option_id);
     };
 
-    if (is_loading) {
+    if (valid_poll_id === null) {
+        return <PageMessage message="Invalid poll id." variant="error" />;
+    }
+
+    if (isLoading) {
         return <PageMessage message="Loading poll..." />;
     }
 
     if (error) {
-        return <PageMessage message={error} variant="error" />;
+        return <PageMessage message={error.message} variant="error" />;
     }
 
     if (!poll) {
@@ -68,10 +74,13 @@ const ViewPollPage = () => {
                 }}
             />
 
-            {poll.has_voted
-                ? <PollResults options={poll.options} total_votes={poll.total_votes} />
-                : <PollVote options={poll.options} onVote={handleVote} />
-            }
+            {vote_mutation.error && <p className="polls-page-error">{vote_mutation.error.message}</p>}
+
+            {poll.has_voted ? (
+                <PollResults options={poll.options} total_votes={poll.total_votes} />
+            ) : (
+                <PollVote options={poll.options} onVote={handleVote} />
+            )}
 
             <ToastContainer position="top-center" className="p-3">
                 <Toast
