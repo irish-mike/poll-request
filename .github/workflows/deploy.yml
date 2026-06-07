@@ -1,143 +1,143 @@
 name: Build and Deploy
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 permissions:
-  contents: read
+    contents: read
 
 # Only keep the latest deployment running.
 concurrency:
-  group: poll-request-main-deploy
-  cancel-in-progress: true
+    group: poll-request-main-deploy
+    cancel-in-progress: true
 
 jobs:
-  validate-server:
-    name: Validate Server
-    runs-on: ubuntu-latest
+    validate-server:
+        name: Validate Server
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          package-manager-cache: false
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  package-manager-cache: false
 
-      - name: Install server dependencies
-        working-directory: server
-        run: npm ci
+            - name: Install server dependencies
+              working-directory: server
+              run: npm ci
 
-      - name: Lint server
-        working-directory: server
-        run: npm run lint --if-present
+            - name: Lint server
+              working-directory: server
+              run: npm run lint --if-present
 
-      - name: Test server
-        working-directory: server
-        run: npm test --if-present
+            - name: Test server
+              working-directory: server
+              run: npm test --if-present
 
-      - name: Build server
-        working-directory: server
-        run: npm run build
+            - name: Build server
+              working-directory: server
+              run: npm run build
 
-  validate-client:
-    name: Validate Client
-    runs-on: ubuntu-latest
+    validate-client:
+        name: Validate Client
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          package-manager-cache: false
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  package-manager-cache: false
 
-      - name: Install client dependencies
-        working-directory: client
-        run: npm ci
+            - name: Install client dependencies
+              working-directory: client
+              run: npm ci
 
-      - name: Lint client
-        working-directory: client
-        run: npm run lint --if-present
+            - name: Lint client
+              working-directory: client
+              run: npm run lint --if-present
 
-      - name: Test client
-        working-directory: client
-        run: npm test --if-present
+            - name: Test client
+              working-directory: client
+              run: npm test --if-present
 
-      - name: Build client
-        working-directory: client
-        run: npm run build
+            - name: Build client
+              working-directory: client
+              run: npm run build
 
-  deploy:
-    name: Deploy
-    needs:
-      - validate-server
-      - validate-client
-    runs-on:
-      - self-hosted
-      - poll-request
+    deploy:
+        name: Deploy
+        needs:
+            - validate-server
+            - validate-client
+        runs-on:
+            - self-hosted
+            - poll-request
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          package-manager-cache: false
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  package-manager-cache: false
 
-      # Build the React app for Apache to serve.
-      - name: Install client dependencies
-        working-directory: client
-        run: npm ci
+            # Build the React app for Apache to serve.
+            - name: Install client dependencies
+              working-directory: client
+              run: npm ci
 
-      - name: Build client
-        working-directory: client
-        run: npm run build
+            - name: Build client
+              working-directory: client
+              run: npm run build
 
-      - name: Deploy client to Apache
-        run: |
-          rsync -a --delete client/dist/ /var/www/${{ vars.APP_NAME }}/
+            - name: Deploy client to Apache
+              run: |
+                  rsync -a --delete client/dist/ /var/www/${{ vars.APP_NAME }}/
 
-      - name: Create production env file
-        run: |
-          cat > .env.production <<EOF
-          APP_DOMAIN=${{ vars.APP_DOMAIN }}
-          APP_NAME=${{ vars.APP_NAME }}
-          SERVER_HOST=${{ vars.SERVER_HOST }}
-          SERVER_CONTAINER_PORT=${{ vars.SERVER_CONTAINER_PORT }}
-          SERVER_HOST_PORT=${{ vars.SERVER_HOST_PORT }}
-          SERVER_HEALTH_PATH=${{ vars.SERVER_HEALTH_PATH }}
-          NODE_ENV=production
-          EOF
+            - name: Create production env file
+              run: |
+                  cat > .env.production <<EOF
+                  APP_DOMAIN=${{ vars.APP_DOMAIN }}
+                  APP_NAME=${{ vars.APP_NAME }}
+                  SERVER_HOST=${{ vars.SERVER_HOST }}
+                  SERVER_CONTAINER_PORT=${{ vars.SERVER_CONTAINER_PORT }}
+                  SERVER_HOST_PORT=${{ vars.SERVER_HOST_PORT }}
+                  SERVER_HEALTH_PATH=${{ vars.SERVER_HEALTH_PATH }}
+                  NODE_ENV=production
+                  EOF
 
-      # Build and restart the server API container.
-      - name: Check Docker Compose config
-        run: docker compose --env-file .env.production -f docker-compose.prod.yml config
+            # Build and restart the server API container.
+            - name: Check Docker Compose config
+              run: docker compose --env-file .env.production -f docker-compose.prod.yml config
 
-      - name: Build server Docker image
-        run: docker compose --env-file .env.production -f docker-compose.prod.yml build
+            - name: Build server Docker image
+              run: docker compose --env-file .env.production -f docker-compose.prod.yml build
 
-      - name: Start server container
-        run: docker compose --env-file .env.production -f docker-compose.prod.yml up -d --force-recreate
+            - name: Start server container
+              run: docker compose --env-file .env.production -f docker-compose.prod.yml up -d --force-recreate
 
-      - name: Wait for app
-        run: sleep 10
+            - name: Wait for app
+              run: sleep 10
 
-      - name: Health check client
-        run: |
-          curl -f -H "Host: ${{ vars.APP_DOMAIN }}" http://127.0.0.1/
+            - name: Health check client
+              run: |
+                  curl -f -H "Host: ${{ vars.APP_DOMAIN }}" http://127.0.0.1/
 
-      - name: Health check server
-        run: |
-          curl -f "http://127.0.0.1:${{ vars.SERVER_HOST_PORT }}${{ vars.SERVER_HEALTH_PATH }}"
+            - name: Health check server
+              run: |
+                  curl -f "http://127.0.0.1:${{ vars.SERVER_HOST_PORT }}${{ vars.SERVER_HEALTH_PATH }}"
 
-      - name: Clean unused Docker images
-        run: docker image prune -f
+            - name: Clean unused Docker images
+              run: docker image prune -f

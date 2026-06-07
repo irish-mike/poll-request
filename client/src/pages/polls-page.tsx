@@ -29,21 +29,14 @@ export const PollsPage = () => {
                 title="Poll Request"
                 description="Spin up a question, ship it to the team, and watch the votes compile."
                 actions={
-                    <Button
-                        className="polls-page-create-button"
-                        onClick={() => navigate("/create")}
-                    >
+                    <Button className="polls-page-create-button" onClick={() => navigate("/create")}>
                         <GitPullRequest size={18} />
                         Create Poll Request
                     </Button>
                 }
             />
 
-            {error ? (
-                <p className="polls-page-error">{error}</p>
-            ) : (
-                <PollGrid polls={polls} />
-            )}
+            {error ? <p className="polls-page-error">{error}</p> : <PollGrid polls={polls} />}
         </Container>
     );
 };

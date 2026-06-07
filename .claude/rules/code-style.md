@@ -10,6 +10,7 @@
 - Avoid broad rewrites unless necessary.
 
 ## Naming
+
 - Use `snake_case` for variables.
 - Use `camelCase` for functions.
 - Use `PascalCase` for types, interfaces, classes, and React components.

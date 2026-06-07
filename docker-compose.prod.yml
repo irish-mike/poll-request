@@ -2,30 +2,23 @@
 # Apache serves the built frontend; Docker only runs the server API.
 
 services:
-  server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: ${APP_NAME}-server
-    restart: unless-stopped
-    ports:
-      # HOST_PORT:CONTAINER_PORT
-      # Only exposed on the server itself.
-      - "127.0.0.1:${SERVER_HOST_PORT}:${SERVER_CONTAINER_PORT}"
-    environment:
-      HOST: ${SERVER_HOST}
-      PORT: ${SERVER_CONTAINER_PORT}
-      NODE_ENV: ${NODE_ENV}
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--spider",
-          "-q",
-          "http://127.0.0.1:${SERVER_CONTAINER_PORT}${SERVER_HEALTH_PATH}"
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+    server:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: ${APP_NAME}-server
+        restart: unless-stopped
+        ports:
+            # HOST_PORT:CONTAINER_PORT
+            # Only exposed on the server itself.
+            - "127.0.0.1:${SERVER_HOST_PORT}:${SERVER_CONTAINER_PORT}"
+        environment:
+            HOST: ${SERVER_HOST}
+            PORT: ${SERVER_CONTAINER_PORT}
+            NODE_ENV: ${NODE_ENV}
+        healthcheck:
+            test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:${SERVER_CONTAINER_PORT}${SERVER_HEALTH_PATH}"]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 10s

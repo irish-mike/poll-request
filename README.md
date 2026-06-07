@@ -17,19 +17,19 @@ poll-request/
 
 ### Frontend
 
-* React
-* Vite
-* TypeScript
-* npm
-* React Bootstrap
-* Lucide Icons
+- React
+- Vite
+- TypeScript
+- npm
+- React Bootstrap
+- Lucide Icons
 
 ### Backend
 
-* Node.js
-* Express.js
-* TypeScript
-* SQLite
+- Node.js
+- Express.js
+- TypeScript
+- SQLite
 
 ## Description
 

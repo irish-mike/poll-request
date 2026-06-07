@@ -3,12 +3,14 @@ import type { CreatePollData, PollRow } from "./types.js";
 
 export function getAllPolls(): PollRow[] {
     return db
-        .prepare<[], PollRow>(`
+        .prepare<[], PollRow>(
+            `
             SELECT id, question, created_at, updated_at
             FROM polls
             WHERE deleted_at IS NULL
             ORDER BY created_at DESC
-        `)
+        `
+        )
         .all();
 }
 

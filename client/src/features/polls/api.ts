@@ -18,7 +18,7 @@ export async function createPoll(question: string, options: string[]): Promise<{
     });
 
     if (!res.ok) {
-        const body = await res.json().catch(() => null) as { error?: string } | null;
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(body?.error ?? "Failed to create poll");
     }
 

@@ -25,9 +25,7 @@ export const PollCard = ({ poll }: Props) => {
                 <div className="poll-card-question-row">
                     <MessageCircleQuestion className="poll-card-question-icon" size={22} />
 
-                    <Card.Text className="poll-card-question">
-                        {poll.question}
-                    </Card.Text>
+                    <Card.Text className="poll-card-question">{poll.question}</Card.Text>
                 </div>
 
                 <div className="poll-card-meta">

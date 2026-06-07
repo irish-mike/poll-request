@@ -42,9 +42,9 @@ const insertVote = db.prepare(`
 
 const seed = db.transaction(() => {
     for (const poll of seedPolls) {
-        const existingPoll = db
-            .prepare("SELECT id FROM polls WHERE question = ?")
-            .get(poll.question) as { id: number } | undefined;
+        const existingPoll = db.prepare("SELECT id FROM polls WHERE question = ?").get(poll.question) as
+            | { id: number }
+            | undefined;
 
         if (existingPoll) {
             console.log(`Skipped existing poll: ${poll.question}`);
@@ -62,15 +62,12 @@ const seed = db.transaction(() => {
         }
 
         for (let i = 0; i < poll.voteCount; i++) {
-            const randomOptionId =
-                optionIds[Math.floor(Math.random() * optionIds.length)];
+            const randomOptionId = optionIds[Math.floor(Math.random() * optionIds.length)];
 
             insertVote.run(pollId, randomOptionId, `seed-user-${pollId}-${i + 1}`);
         }
 
-        console.log(
-            `Seeded poll: ${poll.question} with ${poll.options.length} options and ${poll.voteCount} votes`
-        );
+        console.log(`Seeded poll: ${poll.question} with ${poll.options.length} options and ${poll.voteCount} votes`);
     }
 });
 
