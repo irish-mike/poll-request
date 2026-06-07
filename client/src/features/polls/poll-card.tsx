@@ -1,5 +1,6 @@
 import Card from "react-bootstrap/Card";
 import { Clock3, GitCommit, MessageCircleQuestion } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import type { Poll } from "./types";
 import { formatPollRef } from "./utils";
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const PollCard = ({ poll }: Props) => {
+    const navigate = useNavigate();
     const label = `poll-${formatPollRef(poll.id)}`;
 
     const committed_at = new Date(poll.updated_at * 1000).toLocaleString(undefined, {
@@ -20,7 +22,7 @@ export const PollCard = ({ poll }: Props) => {
     });
 
     return (
-        <Card className="poll-card h-100">
+        <Card className="poll-card h-100" onClick={() => navigate(`/polls/${poll.id}`)}>
             <Card.Body className="poll-card-body">
                 <div className="poll-card-question-row">
                     <MessageCircleQuestion className="poll-card-question-icon" size={22} />
