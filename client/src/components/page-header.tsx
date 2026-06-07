@@ -33,7 +33,7 @@ const PageHeader = ({ icon, title, description, action_button }: Props) => (
                 <Button
                     type={action_button.type ?? "button"}
                     form={action_button.form}
-                    className="header-action-button"
+                    className="action-button"
                     disabled={action_button.disabled}
                     onClick={action_button.onClick}
                 >
