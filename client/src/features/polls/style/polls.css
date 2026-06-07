@@ -421,6 +421,10 @@
     box-shadow: var(--shadow-console);
 }
 
+.form-required {
+    color: var(--color-danger);
+}
+
 .create-poll-form .form-label {
     color: var(--color-text-muted);
     font-family: var(--font-console), ui-monospace;
