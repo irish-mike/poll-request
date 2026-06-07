@@ -238,6 +238,19 @@
 
 /* endregion */
 
+/* region Copy toast */
+
+.copy-toast {
+    background: var(--color-surface-strong);
+    border: 1px solid var(--color-primary-border);
+    box-shadow: var(--shadow-console);
+    color: var(--color-text);
+    font-family: var(--font-console), ui-monospace;
+    font-size: 0.875rem;
+}
+
+/* endregion */
+
 /* region Create poll page */
 
 .page-back-link {

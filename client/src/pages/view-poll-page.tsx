@@ -1,19 +1,23 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import { GitPullRequest, Share2 } from "lucide-react";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
+import { GitPullRequest, Link2 } from "lucide-react";
 
 import BackLink from "../components/back-link";
 import PageHeader from "../components/page-header";
 import { PollRef } from "../features/polls/components/poll-ref.tsx";
 import { PollResults } from "../features/polls/components/poll-results.tsx";
 import { usePoll } from "../features/polls/hooks/use-poll.ts";
+import { copyToClipboard } from "../utils/clipboard";
 
-interface Props {
+interface PageMessageProps {
     message: string;
     variant?: "muted" | "error";
 }
 
-const PageMessage = ({ message, variant = "muted" }: Props) => (
+const PageMessage = ({ message, variant = "muted" }: PageMessageProps) => (
     <Container className="py-5">
         <p className={variant === "error" ? "polls-page-error" : "poll-empty"}>{message}</p>
     </Container>
@@ -24,6 +28,11 @@ const ViewPollPage = () => {
     const poll_id = id ? Number(id) : null;
 
     const { poll, error, is_loading } = usePoll(Number.isFinite(poll_id) ? poll_id : null);
+    const [show_toast, set_show_toast] = useState(false);
+
+    const handleCopyLink = () => {
+        copyToClipboard(window.location.href).then(() => set_show_toast(true));
+    };
 
     if (is_loading) {
         return <PageMessage message="Loading poll..." />;
@@ -46,13 +55,25 @@ const ViewPollPage = () => {
                 title={poll.question}
                 description={<PollRef id={poll.id} />}
                 action_button={{
-                    icon: <Share2 size={18} />,
-                    label: "Share",
-                    onClick: () => console.log("Share poll:", poll.id),
+                    icon: <Link2 size={18} />,
+                    label: "Copy request link",
+                    onClick: handleCopyLink,
                 }}
             />
 
             <PollResults options={poll.options} total_votes={poll.total_votes} />
+
+            <ToastContainer position="top-center" className="p-3">
+                <Toast
+                    className="copy-toast"
+                    show={show_toast}
+                    onClose={() => set_show_toast(false)}
+                    delay={2500}
+                    autohide
+                >
+                    <Toast.Body>Request link copied to clipboard.</Toast.Body>
+                </Toast>
+            </ToastContainer>
         </Container>
     );
 };
