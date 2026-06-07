@@ -12,7 +12,7 @@ import { PollResults } from "../features/polls/components/poll-results.tsx";
 import { PollVote } from "../features/polls/components/poll-vote.tsx";
 import { usePoll } from "../features/polls/hooks/use-poll.ts";
 import { submitVote } from "../features/polls/api/api.ts";
-import { copyToClipboard, getUserToken } from "../utils/browser";
+import { copyToClipboard, createUserToken, getUserToken } from "../utils/browser";
 
 interface PageMessageProps {
     message: string;
@@ -37,7 +37,8 @@ const ViewPollPage = () => {
     };
 
     const handleVote = (option_id: number) => {
-        submitVote(Number(poll_id), option_id, getUserToken()).then(refetch);
+        const user_token = getUserToken() ?? createUserToken();
+        submitVote(Number(poll_id), option_id, user_token).then(refetch);
     };
 
     if (is_loading) {
@@ -67,9 +68,10 @@ const ViewPollPage = () => {
                 }}
             />
 
-            <PollResults options={poll.options} total_votes={poll.total_votes} />
-
-            <PollVote options={poll.options} onVote={handleVote} />
+            {poll.has_voted
+                ? <PollResults options={poll.options} total_votes={poll.total_votes} />
+                : <PollVote options={poll.options} onVote={handleVote} />
+            }
 
             <ToastContainer position="top-center" className="p-3">
                 <Toast

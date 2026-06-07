@@ -1,9 +1,10 @@
 const USER_TOKEN_KEY = "poll-request-user-token";
 
-export function getUserToken(): string {
-    const existing = localStorage.getItem(USER_TOKEN_KEY);
-    if (existing) return existing;
+export function getUserToken(): string | null {
+    return localStorage.getItem(USER_TOKEN_KEY);
+}
 
+export function createUserToken(): string {
     const token = crypto.randomUUID();
     localStorage.setItem(USER_TOKEN_KEY, token);
     return token;

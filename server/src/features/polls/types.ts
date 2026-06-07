@@ -14,6 +14,7 @@ export interface OptionRow {
 export interface PollDetailRow extends PollRow {
     options: OptionRow[];
     total_votes: number;
+    has_voted: boolean;
 }
 
 export interface CreatePollData {

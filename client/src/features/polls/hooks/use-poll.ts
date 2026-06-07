@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getPoll } from "../api/api.ts";
+import { getUserToken } from "../../../utils/browser.ts";
 import type { PollDetail } from "../model/types.ts";
 
 type UsePollState = {
@@ -49,7 +50,7 @@ export function usePoll(id: number | null): UsePollState & { refetch: () => void
 
         set_state(loading_state);
 
-        getPoll(id)
+        getPoll(id, getUserToken())
             .then((poll) => {
                 set_state(getLoadedState(poll));
             })

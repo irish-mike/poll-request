@@ -14,7 +14,7 @@ export function getAllPolls(): PollRow[] {
         .all();
 }
 
-export function getPollById(id: number): PollDetailRow | null {
+export function getPollById(id: number, user_token?: string): PollDetailRow | null {
     const poll = db
         .prepare<[number], PollRow>(
             `
@@ -42,7 +42,15 @@ export function getPollById(id: number): PollDetailRow | null {
 
     const total_votes = options.reduce((sum, o) => sum + o.vote_count, 0);
 
-    return { ...poll, options, total_votes };
+    const has_voted = user_token
+        ? (db
+              .prepare<[number, string], { result: number }>(
+                  `SELECT EXISTS(SELECT 1 FROM votes WHERE poll_id = ? AND user_token = ? AND deleted_at IS NULL) as result`
+              )
+              .get(id, user_token)?.result === 1)
+        : false;
+
+    return { ...poll, options, total_votes, has_voted };
 }
 
 export function insertVote(poll_id: number, input: VoteData): boolean {

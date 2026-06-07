@@ -19,7 +19,8 @@ polls_router.get("/:id", (req, res) => {
         return;
     }
 
-    const poll = getPollById(id);
+    const user_token = typeof req.query.user_token === "string" ? req.query.user_token : undefined;
+    const poll = getPollById(id, user_token);
 
     if (!poll) {
         res.status(404).json({ error: "Poll not found" });

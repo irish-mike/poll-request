@@ -14,4 +14,5 @@ export interface PollOption {
 export interface PollDetail extends Poll {
     options: PollOption[];
     total_votes: number;
+    has_voted: boolean;
 }

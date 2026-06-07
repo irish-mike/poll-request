@@ -19,6 +19,5 @@ export function isValidCreatePollRequest(value: unknown): value is CreatePollDat
 export function isValidVoteRequest(value: unknown): value is VoteData {
     if (!isRecord(value)) return false;
     if (!isPositiveInteger(value.option_id)) return false;
-    if (!isNonEmptyString(value.user_token)) return false;
-    return true;
+    return isNonEmptyString(value.user_token);
 }
