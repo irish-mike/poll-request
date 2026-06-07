@@ -1,5 +1,5 @@
 import db from "../../db/db.js";
-import type { CreatePollData, OptionRow, PollDetailRow, PollRow } from "./types.js";
+import type { CreatePollData, OptionRow, PollDetailRow, PollRow, VoteData } from "./types.js";
 
 export function getAllPolls(): PollRow[] {
     return db
@@ -43,6 +43,17 @@ export function getPollById(id: number): PollDetailRow | null {
     const total_votes = options.reduce((sum, o) => sum + o.vote_count, 0);
 
     return { ...poll, options, total_votes };
+}
+
+export function insertVote(poll_id: number, input: VoteData): boolean {
+    try {
+        db.prepare(
+            `INSERT INTO votes (poll_id, option_id, user_token) VALUES (?, ?, ?)`
+        ).run(poll_id, input.option_id, input.user_token);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 export function insertPoll(input: CreatePollData): number {

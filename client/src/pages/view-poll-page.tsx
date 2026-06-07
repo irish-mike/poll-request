@@ -11,7 +11,8 @@ import { PollRef } from "../features/polls/components/poll-ref.tsx";
 import { PollResults } from "../features/polls/components/poll-results.tsx";
 import { PollVote } from "../features/polls/components/poll-vote.tsx";
 import { usePoll } from "../features/polls/hooks/use-poll.ts";
-import { copyToClipboard } from "../utils/clipboard";
+import { submitVote } from "../features/polls/api/api.ts";
+import { copyToClipboard, getUserToken } from "../utils/browser";
 
 interface PageMessageProps {
     message: string;
@@ -28,11 +29,15 @@ const ViewPollPage = () => {
     const { id } = useParams<{ id: string }>();
     const poll_id = id ? Number(id) : null;
 
-    const { poll, error, is_loading } = usePoll(Number.isFinite(poll_id) ? poll_id : null);
+    const { poll, error, is_loading, refetch } = usePoll(Number.isFinite(poll_id) ? poll_id : null);
     const [show_toast, set_show_toast] = useState(false);
 
     const handleCopyLink = () => {
         copyToClipboard(window.location.href).then(() => set_show_toast(true));
+    };
+
+    const handleVote = (option_id: number) => {
+        submitVote(Number(poll_id), option_id, getUserToken()).then(refetch);
     };
 
     if (is_loading) {
@@ -62,9 +67,9 @@ const ViewPollPage = () => {
                 }}
             />
 
-            {/*<PollResults options={poll.options} total_votes={poll.total_votes} />*/}
+            <PollResults options={poll.options} total_votes={poll.total_votes} />
 
-            <PollVote options={poll.options} onVote={(option_id) => console.log("Vote cast:", option_id)} />
+            <PollVote options={poll.options} onVote={handleVote} />
 
             <ToastContainer position="top-center" className="p-3">
                 <Toast

@@ -20,6 +20,19 @@ export async function getPoll(id: number): Promise<PollDetail> {
     return (await res.json()) as PollDetail;
 }
 
+export async function submitVote(poll_id: number, option_id: number, user_token: string): Promise<void> {
+    const res = await fetch(`/api/polls/${poll_id}/votes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ option_id, user_token }),
+    });
+
+    if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error ?? "Failed to submit vote");
+    }
+}
+
 export async function createPoll(question: string, options: string[]): Promise<{ id: number }> {
     const res = await fetch("/api/polls", {
         method: "POST",

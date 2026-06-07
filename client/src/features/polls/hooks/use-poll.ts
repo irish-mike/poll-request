@@ -37,8 +37,9 @@ function getErrorState(err: unknown): UsePollState {
     };
 }
 
-export function usePoll(id: number | null): UsePollState {
+export function usePoll(id: number | null): UsePollState & { refetch: () => void } {
     const [state, set_state] = useState<UsePollState>(loading_state);
+    const [refetch_counter, set_refetch_counter] = useState(0);
 
     useEffect(() => {
         if (id === null) {
@@ -55,7 +56,7 @@ export function usePoll(id: number | null): UsePollState {
             .catch((err: unknown) => {
                 set_state(getErrorState(err));
             });
-    }, [id]);
+    }, [id, refetch_counter]);
 
-    return state;
+    return { ...state, refetch: () => set_refetch_counter((c) => c + 1) };
 }

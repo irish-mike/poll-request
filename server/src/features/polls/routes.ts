@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { getAllPolls, getPollById } from "./repository.js";
-import { createPoll } from "./service.js";
+import { castVote, createPoll } from "./service.js";
 
 const polls_router = Router();
 
@@ -27,6 +27,29 @@ polls_router.get("/:id", (req, res) => {
     }
 
     res.json(poll);
+});
+
+polls_router.post("/:id/votes", (req, res) => {
+    const poll_id = Number(req.params.id);
+
+    if (!Number.isInteger(poll_id) || poll_id <= 0) {
+        res.status(400).json({ error: "Invalid poll ID" });
+        return;
+    }
+
+    const result = castVote(poll_id, req.body);
+
+    if (result === false) {
+        res.status(400).json({ error: "Invalid vote data" });
+        return;
+    }
+
+    if (result === "duplicate") {
+        res.status(409).json({ error: "Already voted on this poll" });
+        return;
+    }
+
+    res.status(201).json({ ok: true });
 });
 
 polls_router.post("/", (req, res) => {

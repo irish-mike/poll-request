@@ -20,3 +20,8 @@ export interface CreatePollData {
     question: string;
     options: string[];
 }
+
+export interface VoteData {
+    option_id: number;
+    user_token: string;
+}

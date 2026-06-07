@@ -1,5 +1,5 @@
-import { hasLengthBetween, isNonEmptyString, isRecord } from "../../utils/validation.js";
-import type { CreatePollData } from "./types.js";
+import { hasLengthBetween, isNonEmptyString, isPositiveInteger, isRecord } from "../../utils/validation.js";
+import type { CreatePollData, VoteData } from "./types.js";
 
 const min_options = 2;
 const max_options = 5;
@@ -14,4 +14,11 @@ export function isValidCreatePollRequest(value: unknown): value is CreatePollDat
     if (!hasLengthBetween(value.options, min_options, max_options)) return false;
 
     return value.options.every(isNonEmptyString);
+}
+
+export function isValidVoteRequest(value: unknown): value is VoteData {
+    if (!isRecord(value)) return false;
+    if (!isPositiveInteger(value.option_id)) return false;
+    if (!isNonEmptyString(value.user_token)) return false;
+    return true;
 }
